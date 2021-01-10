@@ -41,29 +41,29 @@ function App() {
         payload: JSON.parse(localTodos),
       });
     }
-    cal_GPA(localTodos)
   }
 
   function cal_GPA(cc){
     var cal_gpa = 0
     var cal_cre = 0
-    if (cc.length != 0 && cc) {
-      cc.forEach((obj) => {
-      cal_gpa += obj.gpa_num * obj.credit
-      cal_cre += obj.credit
-      })
-      setGPA(cal_gpa/cal_cre)
-    }
-    else {
-      setGPA(0.00)
-    }
-    
+    cc.forEach((obj) => {
+      if (obj.gpa !== 'W'){
+        cal_gpa += Number(obj.gpa_num) * Number(obj.credit)
+        cal_cre += Number(obj.credit)
+      }
+    })
+    var final_cal = Number(cal_gpa)/Number(cal_cre)
+    console.log(final_cal)
+    if(Number(final_cal) >= 0)
+      setGPA(Number(final_cal.toPrecision(3)))
+    else setGPA(0.00)
   }
 
   useEffect(fetchTodos, []);
 
   useEffect(() => {
     localStorage.setItem("myTable", JSON.stringify(state.myTable));
+    cal_GPA(state.myTable)
   }, [state.myTable]); 
 
 
@@ -71,7 +71,7 @@ function App() {
   return (
     <CardContext.Provider value={{ state, dispatch }}>
       <div className="container mx-auto h-screen">
-        <h1 className="text-4xl py-3 text-center">Todos</h1>
+        <h1 className="text-4xl py-3 text-center">GPA Calculator</h1>
 
         <CourseCard myTable ={state.myTable} />
 
